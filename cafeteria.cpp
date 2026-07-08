@@ -328,6 +328,7 @@ void cancelarPedido(int stock[], int pedidos[], int n)
     cout << "\nPedido cancelado correctamente.\n";
 }
 
+<<<<<<< HEAD
 // Guarda la factura en un archivo de texto
 void generarFactura(string nombreEstudiante, string carnet, string nombre[], float precio[], int pedidos[], int n, char esEstudiante)
 {
@@ -410,6 +411,8 @@ void mostrarVentas()
     }
 }
 
+=======
+>>>>>>> 1c3f39705cfab8ba9b9e953df6cd2ad20379cab9
 int main()
 {
     // Arreglos paralelos del sistema
