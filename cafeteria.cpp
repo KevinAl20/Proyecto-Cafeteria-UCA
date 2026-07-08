@@ -62,6 +62,121 @@ float calcularSubtotal(float precio[], int pedidos[], int n)
 
     return subtotal;
 }
+// Muestra solamente los productos agregados al pedido
+void mostrarPedidoActual(string nombre[], float precio[], int pedidos[], int n)
+{
+    bool hayPedido = false;
+
+    cout << "\n--- PEDIDO ACTUAL ---\n";
+
+    for (int i = 0; i < n; i++)
+    {
+        if (pedidos[i] > 0)
+        {
+            hayPedido = true;
+            cout << (i + 1) << ". " << nombre[i] << " x" << pedidos[i] << " = $" << (precio[i] * pedidos[i]) << "\n";
+        }
+    }
+
+    if (!hayPedido)
+    {
+        cout << "No hay productos en el pedido.\n";
+    }
+}
+
+// Permite agregar productos al pedido
+void realizarPedido(int stock[], int pedidos[], int n)
+{
+    int id;
+    int cantidad;
+
+    while (true)
+    {
+        cout << "\nIngrese el ID del producto (0 para terminar): ";
+        cin >> id;
+
+        // Si el usuario escribe letras en lugar de numeros
+        if (cin.fail())
+        {
+            cin.clear();
+            cin.ignore(1000, '\n');
+            cout << "ID invalido.\n";
+            continue;
+        }
+
+        // El 0 se usa para terminar el pedido
+        if (id == 0)
+        {
+            break;
+        }
+
+        // Validacion del rango del producto
+        if (id < 1 || id > n)
+        {
+            cout << "Producto no valido.\n";
+            continue;
+        }
+
+        cout << "Cantidad: ";
+        cin >> cantidad;
+
+        // Validacion por si se escribe una entrada incorrecta
+        if (cin.fail())
+        {
+            cin.clear();
+            cin.ignore(1000, '\n');
+            cout << "Cantidad invalida.\n";
+            continue;
+        }
+
+        // La cantidad debe ser positiva y no superar el stock
+        if (cantidad <= 0 || cantidad > stock[id - 1])
+        {
+            cout << "Cantidad invalida o sin stock.\n";
+        }
+        else
+        {
+            pedidos[id - 1] += cantidad;
+            stock[id - 1] -= cantidad;
+            cout << "Producto agregado.\n";
+        }
+    }
+}
+
+// Muestra subtotal, descuento y total final
+void mostrarTotal(float precio[], int pedidos[], int n, char esEstudiante)
+{
+    if (pedidoVacio(pedidos, n))
+    {
+        cout << "\nEl pedido esta vacio.\n";
+        return;
+    }
+
+    float subtotal = calcularSubtotal(precio, pedidos, n);
+    float descuento = 0;
+    float total = subtotal;
+
+    // Si es estudiante UCA, se aplica el descuento
+    if (esEstudiante == 'S' || esEstudiante == 's')
+    {
+        descuento = subtotal * DESCUENTO_ESTUDIANTE;
+        total = subtotal - descuento;
+    }
+
+    cout << "\n--------- TOTAL ---------\n";
+    cout << "Subtotal: $" << subtotal << endl;
+
+    if (esEstudiante == 'S' || esEstudiante == 's')
+    {
+        cout << "Descuento: 10% (-$" << descuento << ")" << endl;
+    }
+    else
+    {
+        cout << "Descuento: 0% (-$0)" << endl;
+    }
+
+    cout << "Total: $" << total << endl;
+}
 
 int main()
 {
@@ -123,12 +238,12 @@ int main()
                 break;
 
             case 2:
-                cout << "\nOpcion de pedido en desarrollo.\n";
+                realizarPedido(stock, pedidos, N);
                 break;
 
             case 3:
-                cout << "\nOpcion de total en desarrollo.\n";
-                break;
+                mostrarTotal(precio, pedidos, N, esEstudiante);
+                break;s
 
             case 4:
                 cout << "\nOpcion de modificar en desarrollo.\n";
