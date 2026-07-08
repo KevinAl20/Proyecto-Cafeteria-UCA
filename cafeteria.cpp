@@ -178,6 +178,155 @@ void mostrarTotal(float precio[], int pedidos[], int n, char esEstudiante)
     cout << "Total: $" << total << endl;
 }
 
+// Permite eliminar productos o cambiar cantidades del pedido
+void modificarPedido(string nombre[], float precio[], int stock[], int pedidos[], int n)
+{
+    if (pedidoVacio(pedidos, n))
+    {
+        cout << "\nPedido vacio.\n";
+        return;
+    }
+
+    int opcion;
+    int id;
+    int nuevaCantidad;
+    char otra = 'S';
+
+    while (otra == 'S' || otra == 's')
+    {
+        mostrarPedidoActual(nombre, precio, pedidos, n);
+
+        cout << "\n1. Eliminar producto\n";
+        cout << "2. Cambiar cantidad\n";
+        cout << "3. Volver\n";
+        cout << "Opcion: ";
+        cin >> opcion;
+
+        if (cin.fail())
+        {
+            cin.clear();
+            cin.ignore(1000, '\n');
+            cout << "Opcion invalida.\n";
+            continue;
+        }
+
+        if (opcion == 1)
+        {
+            cout << "ID: ";
+            cin >> id;
+
+            if (cin.fail())
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                cout << "ID invalido.\n";
+                continue;
+            }
+
+            if (id < 1 || id > n || pedidos[id - 1] == 0)
+            {
+                cout << "Producto invalido.\n";
+            }
+            else
+            {
+                stock[id - 1] += pedidos[id - 1];
+                pedidos[id - 1] = 0;
+                cout << "Producto eliminado.\n";
+            }
+        }
+        else if (opcion == 2)
+        {
+            cout << "ID: ";
+            cin >> id;
+
+            if (cin.fail())
+            {
+                cin.clear();
+                cin.ignore(1000, '\n');
+                cout << "ID invalido.\n";
+                continue;
+            }
+
+            if (id < 1 || id > n || pedidos[id - 1] == 0)
+            {
+                cout << "Producto invalido.\n";
+            }
+            else
+            {
+                cout << "Nueva cantidad: ";
+                cin >> nuevaCantidad;
+
+                if (cin.fail())
+                {
+                    cin.clear();
+                    cin.ignore(1000, '\n');
+                    cout << "Cantidad invalida.\n";
+                    continue;
+                }
+
+                if (nuevaCantidad < 0)
+                {
+                    cout << "Cantidad invalida.\n";
+                }
+                else
+                {
+                    // Se suma el stock actual mas lo que ya estaba en el pedido
+                    int disponible = stock[id - 1] + pedidos[id - 1];
+
+                    if (nuevaCantidad > disponible)
+                    {
+                        cout << "Stock insuficiente.\n";
+                    }
+                    else
+                    {
+                        stock[id - 1] = disponible - nuevaCantidad;
+                        pedidos[id - 1] = nuevaCantidad;
+                        cout << "Cantidad modificada.\n";
+                    }
+                }
+            }
+        }
+        else if (opcion == 3)
+        {
+            break;
+        }
+        else
+        {
+            cout << "Opcion invalida.\n";
+        }
+
+        // Si el pedido aun tiene productos, se puede seguir modificando
+        if (!pedidoVacio(pedidos, n))
+        {
+            cout << "\n¿Desea realizar otra modificacion? (S/N): ";
+            cin >> otra;
+        }
+        else
+        {
+            cout << "\nEl pedido quedo vacio.\n";
+            break;
+        }
+    }
+}
+
+// Cancela el pedido y devuelve los productos al stock
+void cancelarPedido(int stock[], int pedidos[], int n)
+{
+    if (pedidoVacio(pedidos, n))
+    {
+        cout << "\nNo existe ningun pedido.\n";
+        return;
+    }
+
+    for (int i = 0; i < n; i++)
+    {
+        stock[i] += pedidos[i];
+        pedidos[i] = 0;
+    }
+
+    cout << "\nPedido cancelado correctamente.\n";
+}
+
 int main()
 {
     // Arreglos paralelos del sistema
@@ -243,14 +392,14 @@ int main()
 
             case 3:
                 mostrarTotal(precio, pedidos, N, esEstudiante);
-                break;s
+                break;
 
             case 4:
-                cout << "\nOpcion de modificar en desarrollo.\n";
+                modificarPedido(nombre, precio, stock, pedidos, N);
                 break;
 
             case 5:
-                cout << "\nOpcion de cancelar en desarrollo.\n";
+                cancelarPedido(stock, pedidos, N);
                 break;
 
             case 6:
